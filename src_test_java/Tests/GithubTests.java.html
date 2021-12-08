@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>GithubTests.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (08/12/2021 11:29:42)</a> &gt; <a href="../../index.html" class="el_group">ScrumDashboard</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">Tests</a> &gt; <span class="el_source">GithubTests.java</span></div><h1>GithubTests.java</h1><pre class="source lang-java linenums">package Tests;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.swing.JOptionPane;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.kohsuke.github.GHTag;
+
+import Backend.GitHubAPI;
+//Junit tests
+<span class="fc" id="L19">class GithubTests {</span>
+	
+	static GitHubAPI app,app2;	
+<span class="fc" id="L22">	static String s1 =&quot;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&quot;;</span>
+<span class="fc" id="L23">	static String s2= &quot;henrique-efonseca/ES-LETI-1Sem-2021-Grupo3&quot;;</span>
+
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+<span class="fc" id="L27">		app= new GitHubAPI();</span>
+<span class="fc" id="L28">		app2= new GitHubAPI();</span>
+<span class="fc" id="L29">		app.setUp(s1,s2);</span>
+<span class="fc" id="L30">		app2.setUp(s1,s2);</span>
+<span class="fc" id="L31">	}</span>
+
+	@Test
+	void testCommits() throws IOException {
+<span class="fc" id="L35">		String commits = app.commits();</span>
+		//Some of the commits from &quot;commits&quot;
+<span class="fc" id="L37">		boolean statement=commits.contains(&quot;Testing connection to remote repositorie&quot;);</span>
+<span class="fc" id="L38">		assertTrue(statement);</span>
+<span class="fc" id="L39">		boolean statement2=commits.contains(&quot;Added trello API conection&quot;);</span>
+<span class="fc" id="L40">		assertTrue(statement2);</span>
+<span class="fc" id="L41">		boolean statement3=commits.contains(&quot;Worked on JavaDoc&quot;);</span>
+<span class="fc" id="L42">		assertTrue(statement3);</span>
+<span class="fc" id="L43">		boolean statement4=commits.contains(&quot;Tue Dec 07 23:02:33 WET 2021&quot;);</span>
+<span class="fc" id="L44">		assertTrue(statement4);</span>
+<span class="fc" id="L45">		boolean statement5=commits.contains(&quot;Added function to show Tags and respective dates&quot;);</span>
+<span class="fc" id="L46">		assertTrue(statement5);</span>
+<span class="fc" id="L47">		boolean statement6=commits.contains(&quot;SD-24&quot;);</span>
+<span class="fc" id="L48">		assertTrue(statement6);</span>
+<span class="fc" id="L49">	}</span>
+
+	@Test
+	void testGetREADME() throws IOException {
+<span class="fc" id="L53">		assertNotNull(app.getREADME());</span>
+<span class="fc" id="L54">		assertNotNull(app2.getREADME());</span>
+<span class="fc" id="L55">		assertEquals(app2.getREADME(),app.getREADME());</span>
+<span class="fc" id="L56">	}</span>
+
+	@Test
+	void testGetRepoName() throws IOException {
+<span class="fc" id="L60">		assertNotNull(app.getRepoName());</span>
+<span class="fc" id="L61">		assertEquals(&quot;ES-LETI-1Sem-2021-Grupo3&quot;,app.getRepoName());</span>
+<span class="fc" id="L62">	}</span>
+	
+	@Test
+	void testGetTags() throws IOException {	
+<span class="fc" id="L66">		assertNotNull(app.getTags());</span>
+<span class="fc" id="L67">		assertFalse(app.getTags().isEmpty());</span>
+<span class="fc" id="L68">		HashMap&lt;GHTag, String&gt; tags_dates=app.getTags();</span>
+<span class="fc" id="L69">		String temp=&quot;&quot;;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		for (GHTag tag : tags_dates.keySet()) temp+=tag.getName() + &quot;\n&quot; + tags_dates.get(tag)+&quot;\n&quot;;</span>
+<span class="fc" id="L71">		Assertions.assertTrue(temp.contains(&quot;v0.1.0&quot;));</span>
+<span class="fc" id="L72">		Assertions.assertTrue(temp.contains(&quot;Sun Nov 21 23:36:16 WET 2021&quot;));</span>
+<span class="fc" id="L73">		Assertions.assertTrue(temp.contains(&quot;v0.2.0&quot;));</span>
+<span class="fc" id="L74">		Assertions.assertTrue(temp.contains(&quot;Tue Dec 07 23:42:08 WET 2021&quot;));</span>
+<span class="fc" id="L75">		Assertions.assertTrue(temp.contains(&quot;v0.3.0&quot;));</span>
+<span class="fc" id="L76">		Assertions.assertTrue(temp.contains(&quot;Wed Dec 08 00:06:50 WET 2021&quot;));</span>
+
+		
+<span class="fc" id="L79">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span>java (08/12/2021 11:29:42)</div></body></html>

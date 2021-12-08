@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Github.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (08/12/2021 11:29:42)</a> &gt; <a href="../../index.html" class="el_group">ScrumDashboard</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">Frontend</a> &gt; <span class="el_source">Github.java</span></div><h1>Github.java</h1><pre class="source lang-java linenums">package Frontend;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.HeadlessException;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import org.kohsuke.github.GHTag;
+
+import Backend.GitHubAPI;
+import Backend.TrelloAPI;
+
+public class Github {
+
+	private JFrame frame;
+<span class="nc" id="L29">	private final GitHubAPI app = new GitHubAPI();	</span>
+	private String repo;
+	
+	//private final GithubAPI app = new GithubAPI();
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+<span class="nc" id="L37">		EventQueue.invokeLater(new Runnable() {</span>
+			public void run() {
+				try {
+<span class="nc" id="L40">					Github window = new Github();</span>
+<span class="nc" id="L41">					window.frame.setVisible(true);</span>
+<span class="nc" id="L42">				} catch (Exception e) {</span>
+<span class="nc" id="L43">					e.printStackTrace();</span>
+				}
+<span class="nc" id="L45">			}</span>
+		});
+<span class="nc" id="L47">	}</span>
+
+	public JFrame getFrame(){
+<span class="nc" id="L50">		return this.frame;</span>
+	} 
+	
+	/**
+	 * Create the application.
+	 */
+<span class="nc" id="L56">	public Github() {</span>
+<span class="nc" id="L57">		initialize();</span>
+<span class="nc" id="L58">	}</span>
+
+	public void iniciar(String s1, String s2) throws IOException{
+<span class="nc" id="L61">		repo=s2;</span>
+<span class="nc" id="L62">		app.setUp(s1,s2);</span>
+<span class="nc" id="L63">		initialize();</span>
+<span class="nc" id="L64">	}</span>
+	
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+<span class="nc" id="L70">		frame = new JFrame();</span>
+<span class="nc" id="L71">		frame.getContentPane().setBackground(new Color(253, 245, 230));</span>
+<span class="nc" id="L72">		frame.setBounds(100, 100, 423, 554);</span>
+<span class="nc" id="L73">		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L74">		frame.getContentPane().setLayout(null);</span>
+		
+		//--------------------------------------------------------//
+		
+		
+<span class="nc" id="L79">		JLabel lblNewLabel_1_2 = new JLabel(&quot;REPOSITORIO&quot;);</span>
+<span class="nc" id="L80">		lblNewLabel_1_2.setForeground(Color.DARK_GRAY);</span>
+<span class="nc" id="L81">		lblNewLabel_1_2.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 30));</span>
+<span class="nc" id="L82">		lblNewLabel_1_2.setBounds(109, 26, 223, 49);</span>
+<span class="nc" id="L83">		frame.getContentPane().add(lblNewLabel_1_2);</span>
+		
+<span class="nc" id="L85">		JButton btnNewButton_1_1 = new JButton(&quot;Nome&quot;);</span>
+<span class="nc" id="L86">		btnNewButton_1_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+				try {
+<span class="nc" id="L89">					JOptionPane.showMessageDialog(null, app.getRepoName(), &quot;Nome:&quot;, JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L90">				} catch (HeadlessException e1) {</span>
+					// TODO Auto-generated catch block
+<span class="nc" id="L92">					e1.printStackTrace();</span>
+<span class="nc" id="L93">				} catch (IOException e1) {</span>
+					// TODO Auto-generated catch block
+<span class="nc" id="L95">					e1.printStackTrace();</span>
+				}
+<span class="nc" id="L97">			}</span>
+		});
+<span class="nc" id="L99">		btnNewButton_1_1.setForeground(new Color(245, 255, 250));</span>
+<span class="nc" id="L100">		btnNewButton_1_1.setFont(new Font(&quot;Yu Gothic UI Light&quot;, Font.BOLD, 15));</span>
+<span class="nc" id="L101">		btnNewButton_1_1.setBackground(Color.DARK_GRAY);</span>
+<span class="nc" id="L102">		btnNewButton_1_1.setBounds(132, 74, 143, 43);</span>
+<span class="nc" id="L103">		frame.getContentPane().add(btnNewButton_1_1);</span>
+		
+		//--------------------------------------------------------//
+		
+<span class="nc" id="L107">		JLabel lblNewLabel_1 = new JLabel(&quot;Conteudo do README&quot;);</span>
+<span class="nc" id="L108">		lblNewLabel_1.setBounds(94, 140, 223, 49);</span>
+<span class="nc" id="L109">		lblNewLabel_1.setForeground(Color.DARK_GRAY);</span>
+<span class="nc" id="L110">		lblNewLabel_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L111">		frame.getContentPane().add(lblNewLabel_1);</span>
+		
+		
+<span class="nc" id="L114">		JButton btnNewButton_1 = new JButton(&quot;Read me&quot;);</span>
+<span class="nc" id="L115">		btnNewButton_1.setForeground(new Color(245, 255, 250));</span>
+<span class="nc" id="L116">		btnNewButton_1.setBounds(132, 186, 143, 43);</span>
+<span class="nc" id="L117">		btnNewButton_1.setBackground(Color.DARK_GRAY);</span>
+<span class="nc" id="L118">		btnNewButton_1.setFont(new Font(&quot;Yu Gothic UI Light&quot;, Font.BOLD, 15));</span>
+<span class="nc" id="L119">		btnNewButton_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+				try {
+<span class="nc" id="L122">					JOptionPane.showMessageDialog(null, app.getREADME(), &quot;READ ME:&quot;, JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L123">				} catch (HeadlessException | IOException e1) {</span>
+					// TODO Auto-generated catch block
+<span class="nc" id="L125">					e1.printStackTrace();</span>
+				}
+<span class="nc" id="L127">			}</span>
+		});
+<span class="nc" id="L129">		frame.getContentPane().add(btnNewButton_1);</span>
+		
+		
+		//--------------------------------------------------------//
+		
+		
+<span class="nc" id="L135">		JLabel lblNewLabel_1_1 = new JLabel(&quot;Lista de Commits&quot;);</span>
+<span class="nc" id="L136">		lblNewLabel_1_1.setBounds(121, 252, 177, 49);</span>
+<span class="nc" id="L137">		lblNewLabel_1_1.setForeground(Color.DARK_GRAY);</span>
+<span class="nc" id="L138">		lblNewLabel_1_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L139">		frame.getContentPane().add(lblNewLabel_1_1);</span>
+		
+<span class="nc" id="L141">		JButton commit = new JButton(&quot;Commit&quot;);</span>
+<span class="nc" id="L142">		commit.setForeground(new Color(245, 255, 250));</span>
+<span class="nc" id="L143">		commit.setBackground(Color.DARK_GRAY);</span>
+<span class="nc" id="L144">		commit.setBounds(132, 293, 143, 43);</span>
+<span class="nc" id="L145">		commit.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L146">		commit.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+				try {
+<span class="nc" id="L149">					JTextArea textArea = new JTextArea(app.commits());</span>
+<span class="nc" id="L150">					JScrollPane scrollPane = new JScrollPane(textArea);  </span>
+<span class="nc" id="L151">					textArea.setLineWrap(true);  </span>
+<span class="nc" id="L152">					textArea.setWrapStyleWord(true); </span>
+<span class="nc" id="L153">					scrollPane.setPreferredSize( new Dimension( 500, 500 ) );</span>
+<span class="nc" id="L154">					JOptionPane.showMessageDialog(null, scrollPane, &quot;Commits:&quot;, JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L155">				} catch (HeadlessException | IOException e1) {</span>
+					// TODO Auto-generated catch block
+<span class="nc" id="L157">					e1.printStackTrace();</span>
+				}		
+<span class="nc" id="L159">			}</span>
+		});
+		
+<span class="nc" id="L162">		frame.getContentPane().add(commit);</span>
+		
+		//--------------------------------------------------------//
+
+		
+<span class="nc" id="L167">		JButton btnTag = new JButton(&quot;Tag&quot;);</span>
+<span class="nc" id="L168">        btnTag.addActionListener(new ActionListener() {</span>
+            public void actionPerformed(ActionEvent e) {
+            	HashMap&lt;GHTag, String&gt; tags_dates;
+				try {
+<span class="nc" id="L172">					String tags=&quot;&quot;;</span>
+<span class="nc" id="L173">					tags_dates = app.getTags();</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">					for (GHTag tag : tags_dates.keySet()) {</span>
+<span class="nc" id="L175">	    				tags+=&quot;Tag: &quot; + tag.getName() + &quot;\n&quot; + &quot;Date: &quot; + tags_dates.get(tag)+&quot;\n\r&quot;;</span>
+	    			}
+<span class="nc" id="L177">					JOptionPane.showMessageDialog(null,tags, &quot;Tag:&quot;, JOptionPane.PLAIN_MESSAGE);</span>
+
+<span class="nc" id="L179">				} catch (IOException e1) {</span>
+					// TODO Auto-generated catch block
+<span class="nc" id="L181">					e1.printStackTrace();</span>
+				}
+ 		
+<span class="nc" id="L184">            }</span>
+        });
+<span class="nc" id="L186">        btnTag.setForeground(new Color(240, 248, 255));</span>
+<span class="nc" id="L187">        btnTag.setBackground(Color.DARK_GRAY);</span>
+<span class="nc" id="L188">        btnTag.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L189">        btnTag.setBounds(132, 405, 143, 43);</span>
+<span class="nc" id="L190">        frame.getContentPane().add(btnTag);</span>
+
+<span class="nc" id="L192">        JLabel lblNewLabel_1_1_1 = new JLabel(&quot;Lista de todas as tags&quot;);</span>
+<span class="nc" id="L193">        lblNewLabel_1_1_1.setForeground(Color.DARK_GRAY);</span>
+<span class="nc" id="L194">        lblNewLabel_1_1_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L195">        lblNewLabel_1_1_1.setBounds(100, 357, 217, 49);</span>
+<span class="nc" id="L196">        frame.getContentPane().add(lblNewLabel_1_1_1);</span>
+<span class="nc" id="L197">        }</span>
+		
+		
+
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * 
+	 * 
+	 * HashMap&lt;GHTag, String&gt; tags_dates = api.getTags();
+			
+			
+			for (GHTag tag : tags_dates.keySet()) {
+				System.out.println(&quot;Tag: &quot; + tag.getName() );
+				System.out.println(&quot;Date: &quot; + tags_dates.get(tag) );
+			}
+	 * 
+	 * */
+	 
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span>java (08/12/2021 11:29:42)</div></body></html>

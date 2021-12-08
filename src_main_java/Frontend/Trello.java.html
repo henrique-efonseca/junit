@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Trello.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (08/12/2021 11:29:42)</a> &gt; <a href="../../index.html" class="el_group">ScrumDashboard</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">Frontend</a> &gt; <span class="el_source">Trello.java</span></div><h1>Trello.java</h1><pre class="source lang-java linenums">package Frontend;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import javax.swing.JButton;
+import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
+import javax.swing.Action;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.List;
+
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.DropMode;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.JToggleButton;
+import javax.swing.JTextPane;
+import javax.swing.JTextArea;
+import java.awt.Font;
+import java.awt.SystemColor;
+import javax.swing.event.ChangeListener;
+
+import Backend.TrelloAPI;
+import Backend.TrelloAPI;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.JTable;
+
+<span class="nc" id="L38">public class Trello {</span>
+
+	private JFrame frame;
+<span class="nc" id="L41">	private final TrelloAPI app = new TrelloAPI();</span>
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+<span class="nc" id="L47">		EventQueue.invokeLater(new Runnable() {</span>
+			public void run() {
+				try {
+<span class="nc" id="L50">					Trello window = new Trello();</span>
+<span class="nc" id="L51">					window.frame.setVisible(true);</span>
+<span class="nc" id="L52">				} catch (Exception e) {</span>
+<span class="nc" id="L53">					e.printStackTrace();</span>
+				}
+<span class="nc" id="L55">			}</span>
+		});
+		
+<span class="nc" id="L58">	}</span>
+	/**
+	 * Create the application.
+	 */
+
+	public JFrame getFrame(){
+<span class="nc" id="L64">		return this.frame;</span>
+	} 
+	
+	public void iniciar(String s1, String s2, String s3){
+<span class="nc" id="L68">		app.setUp(s1,s2,s3);</span>
+<span class="nc" id="L69">		initialize();</span>
+<span class="nc" id="L70">	}</span>
+	
+	/**
+	 * Initialize the contents of the frame.
+	 * @wbp.parser.entryPoint
+	 */
+	private void initialize() {
+		//app.teste();
+<span class="nc" id="L78">		frame = new JFrame();</span>
+<span class="nc" id="L79">		frame.getContentPane().setBackground(Color.DARK_GRAY);</span>
+<span class="nc" id="L80">		frame.setBounds(100, 100, 980, 967);</span>
+<span class="nc" id="L81">		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+		
+		//--------------------------------------------------------//
+		
+		
+		
+		//--------------------------------------------------------//
+		
+		
+<span class="nc" id="L90">		JLabel lblNewLabel = new JLabel(&quot;Dark Mode&quot;);</span>
+<span class="nc" id="L91">		lblNewLabel.setForeground(new Color(255, 215, 0));</span>
+<span class="nc" id="L92">		lblNewLabel.setFont(new Font(&quot;HP Simplified Jpan Light&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L93">		lblNewLabel.setBounds(837, 10, 119, 29);</span>
+<span class="nc" id="L94">		frame.getContentPane().add(lblNewLabel);</span>
+		
+<span class="nc" id="L96">		JToggleButton tglbtnNewToggleButton = new JToggleButton(&quot;ON&quot;);</span>
+<span class="nc" id="L97">		tglbtnNewToggleButton.setForeground(Color.DARK_GRAY);</span>
+<span class="nc" id="L98">		tglbtnNewToggleButton.setBackground(SystemColor.info);</span>
+<span class="nc" id="L99">		tglbtnNewToggleButton.setFont(new Font(&quot;Trebuchet MS&quot;, Font.BOLD, 17));</span>
+<span class="nc" id="L100">		tglbtnNewToggleButton.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L102">				frame.getContentPane().setBackground(new Color(0,0,0));</span>
+<span class="nc" id="L103">			}</span>
+		});
+<span class="nc" id="L105">		tglbtnNewToggleButton.setBounds(847, 40, 77, 28);</span>
+<span class="nc" id="L106">		frame.getContentPane().add(tglbtnNewToggleButton);</span>
+		
+		//--------------------------------------------------------//
+		
+<span class="nc" id="L110">		JButton btnCreateCard = new JButton(&quot;Create Card&quot;);</span>
+<span class="nc" id="L111">		btnCreateCard.setBackground(SystemColor.info);</span>
+<span class="nc" id="L112">		btnCreateCard.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L114">				String list_name = JOptionPane.showInputDialog(&quot;In what list would you like to add a card?&quot;);</span>
+<span class="nc" id="L115">				String card_name = JOptionPane.showInputDialog(&quot;Card name:&quot;);</span>
+<span class="nc" id="L116">				app.createBoard(list_name, card_name);</span>
+<span class="nc" id="L117">			}</span>
+		});
+<span class="nc" id="L119">		btnCreateCard.setBounds(798, 107, 126, 28);</span>
+<span class="nc" id="L120">		frame.getContentPane().add(btnCreateCard);</span>
+		
+	
+		
+		//--------------------------------------------------------//
+		
+
+<span class="nc" id="L127">		JLabel lblNewLabel_1 = new JLabel(&quot;Identificação do Projeto&quot;);</span>
+<span class="nc" id="L128">		lblNewLabel_1.setForeground(SystemColor.info);</span>
+<span class="nc" id="L129">		lblNewLabel_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 25));</span>
+<span class="nc" id="L130">		lblNewLabel_1.setBounds(339, 26, 332, 49);</span>
+<span class="nc" id="L131">		frame.getContentPane().add(lblNewLabel_1);</span>
+		
+		
+<span class="nc" id="L134">		JButton btnNewButton_1 = new JButton(&quot;Obter&quot;);</span>
+<span class="nc" id="L135">		btnNewButton_1.setBackground(SystemColor.info);</span>
+<span class="nc" id="L136">		btnNewButton_1.setFont(new Font(&quot;Yu Gothic UI Light&quot;, Font.BOLD, 15));</span>
+<span class="nc" id="L137">		btnNewButton_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L139">				JOptionPane.showMessageDialog(null, app.projectID(), &quot;Identificação do Projeto:&quot;, JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L140">			}</span>
+		});
+<span class="nc" id="L142">		btnNewButton_1.setBounds(426, 86, 143, 35);</span>
+<span class="nc" id="L143">		frame.getContentPane().add(btnNewButton_1);</span>
+		
+		
+		//--------------------------------------------------------//
+		
+		
+<span class="nc" id="L149">		JLabel lblNewLabel_1_1 = new JLabel(&quot;Identificação dos elementos da equipa do projeto&quot;);</span>
+<span class="nc" id="L150">		lblNewLabel_1_1.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L151">		lblNewLabel_1_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L152">		lblNewLabel_1_1.setBounds(45, 157, 697, 49);</span>
+<span class="nc" id="L153">		frame.getContentPane().add(lblNewLabel_1_1);</span>
+		
+<span class="nc" id="L155">		JButton membros = new JButton(&quot;Membros&quot;);</span>
+<span class="nc" id="L156">		membros.setBackground(SystemColor.info);</span>
+<span class="nc" id="L157">		membros.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L158">		membros.setBounds(45, 204, 149, 40);</span>
+<span class="nc" id="L159">		membros.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L161">				JOptionPane.showMessageDialog(null, app.members(), &quot;Membros da board:&quot;, JOptionPane.PLAIN_MESSAGE);		</span>
+<span class="nc" id="L162">			}</span>
+		});
+<span class="nc" id="L164">		frame.getContentPane().setLayout(null);</span>
+<span class="nc" id="L165">		frame.getContentPane().add(membros);</span>
+		
+		//--------------------------------------------------------//
+
+		
+<span class="nc" id="L170">		JLabel lblNewLabel_1_1_2 = new JLabel(&quot;Data início do projeto&quot;);</span>
+<span class="nc" id="L171">		lblNewLabel_1_1_2.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L172">		lblNewLabel_1_1_2.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L173">		lblNewLabel_1_1_2.setBounds(45, 269, 697, 49);</span>
+<span class="nc" id="L174">		frame.getContentPane().add(lblNewLabel_1_1_2);</span>
+		
+<span class="nc" id="L176">		JButton btnData = new JButton(&quot;Data&quot;);</span>
+<span class="nc" id="L177">		btnData.setBackground(SystemColor.info);</span>
+<span class="nc" id="L178">		btnData.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L180">				JOptionPane.showMessageDialog(null, app.projectDate(), &quot;Data:&quot;, JOptionPane.PLAIN_MESSAGE);		</span>
+<span class="nc" id="L181">			}</span>
+		});
+<span class="nc" id="L183">		btnData.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L184">		btnData.setBounds(45, 312, 149, 40);</span>
+<span class="nc" id="L185">		frame.getContentPane().add(btnData);</span>
+		
+<span class="nc" id="L187">		JLabel lblNewLabel_1_1_2_1 = new JLabel(&quot;Data início dos Sprints&quot;);</span>
+<span class="nc" id="L188">		lblNewLabel_1_1_2_1.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L189">		lblNewLabel_1_1_2_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L190">		lblNewLabel_1_1_2_1.setBounds(713, 162, 223, 49);</span>
+<span class="nc" id="L191">		frame.getContentPane().add(lblNewLabel_1_1_2_1);</span>
+		
+<span class="nc" id="L193">		JButton btnData_1 = new JButton(&quot;Data&quot;);</span>
+<span class="nc" id="L194">		btnData_1.setBackground(SystemColor.info);</span>
+<span class="nc" id="L195">		btnData_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L197">				String dates =&quot;&quot;;</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">				for(Sprint s: app.getSprints()) dates += s.getName()+&quot;\n&quot;+s.getDate();</span>
+						
+<span class="nc" id="L200">				JOptionPane.showMessageDialog(null, dates, &quot;Data:&quot;, JOptionPane.PLAIN_MESSAGE);	</span>
+<span class="nc" id="L201">			}</span>
+		});
+<span class="nc" id="L203">		btnData_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L204">		btnData_1.setBounds(782, 210, 149, 40);</span>
+<span class="nc" id="L205">		frame.getContentPane().add(btnData_1);</span>
+		
+		//--------------------------------------------------------//
+		
+<span class="nc" id="L209">		JLabel lblNewLabel_1_1_2_1_1 = new JLabel(&quot;Itens do Product Backlog&quot;);</span>
+<span class="nc" id="L210">		lblNewLabel_1_1_2_1_1.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L211">		lblNewLabel_1_1_2_1_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L212">		lblNewLabel_1_1_2_1_1.setBounds(45, 398, 299, 49);</span>
+<span class="nc" id="L213">		frame.getContentPane().add(lblNewLabel_1_1_2_1_1);</span>
+		
+<span class="nc" id="L215">		JButton btnData_1_1 = new JButton(&quot;Itens&quot;);</span>
+<span class="nc" id="L216">		btnData_1_1.setBackground(SystemColor.info);</span>
+<span class="nc" id="L217">		btnData_1_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L219">				JOptionPane.showMessageDialog(null, app.productBacklog(), &quot;Products:&quot;, JOptionPane.PLAIN_MESSAGE);	</span>
+<span class="nc" id="L220">			}</span>
+		});
+<span class="nc" id="L222">		btnData_1_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L223">		btnData_1_1.setBounds(45, 441, 149, 40);</span>
+<span class="nc" id="L224">		frame.getContentPane().add(btnData_1_1);</span>
+		
+		//--------------------------------------------------------//
+
+<span class="nc" id="L228">		JLabel lblNewLabel_1_1_2_1_1_1 = new JLabel(&quot;Texto de cada Sprint&quot;);</span>
+<span class="nc" id="L229">		lblNewLabel_1_1_2_1_1_1.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L230">		lblNewLabel_1_1_2_1_1_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L231">		lblNewLabel_1_1_2_1_1_1.setBounds(45, 521, 299, 49);</span>
+<span class="nc" id="L232">		frame.getContentPane().add(lblNewLabel_1_1_2_1_1_1);</span>
+		
+<span class="nc" id="L234">		JButton btnData_1_1_1 = new JButton(&quot;Texto&quot;);</span>
+<span class="nc" id="L235">		btnData_1_1_1.setBackground(SystemColor.info);</span>
+<span class="nc" id="L236">		btnData_1_1_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L238">				JTextArea textArea = new JTextArea(app.sprintsText());</span>
+<span class="nc" id="L239">				JScrollPane scrollPane = new JScrollPane(textArea);  </span>
+<span class="nc" id="L240">				textArea.setLineWrap(true);  </span>
+<span class="nc" id="L241">				textArea.setWrapStyleWord(true); </span>
+<span class="nc" id="L242">				scrollPane.setPreferredSize( new Dimension( 500, 500 ) );</span>
+<span class="nc" id="L243">				JOptionPane.showMessageDialog(null, scrollPane, &quot;Sprints:&quot;, JOptionPane.PLAIN_MESSAGE);	</span>
+<span class="nc" id="L244">			}</span>
+		});
+<span class="nc" id="L246">		btnData_1_1_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L247">		btnData_1_1_1.setBounds(45, 565, 149, 40);</span>
+<span class="nc" id="L248">		frame.getContentPane().add(btnData_1_1_1);</span>
+		
+		//--------------------------------------------------------//
+
+		
+<span class="nc" id="L253">		JLabel lblNewLabel_1_1_2_1_1_2 = new JLabel(&quot;Data das funções implementadas&quot;);</span>
+<span class="nc" id="L254">		lblNewLabel_1_1_2_1_1_2.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L255">		lblNewLabel_1_1_2_1_1_2.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L256">		lblNewLabel_1_1_2_1_1_2.setBounds(597, 272, 344, 49);</span>
+<span class="nc" id="L257">		frame.getContentPane().add(lblNewLabel_1_1_2_1_1_2);</span>
+		
+<span class="nc" id="L259">		JButton btnData_1_2 = new JButton(&quot;Data&quot;);</span>
+<span class="nc" id="L260">		btnData_1_2.setBackground(SystemColor.info);</span>
+<span class="nc" id="L261">		btnData_1_2.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L263">				JTextArea textArea = new JTextArea(app.functionDate());</span>
+<span class="nc" id="L264">				JScrollPane scrollPane = new JScrollPane(textArea);  </span>
+<span class="nc" id="L265">				textArea.setLineWrap(true);  </span>
+<span class="nc" id="L266">				textArea.setWrapStyleWord(true); </span>
+<span class="nc" id="L267">				scrollPane.setPreferredSize( new Dimension( 500, 500 ) );</span>
+<span class="nc" id="L268">				JOptionPane.showMessageDialog(null, scrollPane, &quot;Fim das funcionalidades testadas:&quot; , JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L269">			}</span>
+		});
+<span class="nc" id="L271">		btnData_1_2.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L272">		btnData_1_2.setBounds(782, 319, 149, 40);</span>
+<span class="nc" id="L273">		frame.getContentPane().add(btnData_1_2);</span>
+		
+		//--------------------------------------------------------//
+
+		
+<span class="nc" id="L278">		JLabel lblNewLabel_1_1_2_1_1_1_1 = new JLabel(&quot;Horas de trabalho&quot;);</span>
+<span class="nc" id="L279">		lblNewLabel_1_1_2_1_1_1_1.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L280">		lblNewLabel_1_1_2_1_1_1_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L281">		lblNewLabel_1_1_2_1_1_1_1.setBounds(755, 387, 176, 49);</span>
+<span class="nc" id="L282">		frame.getContentPane().add(lblNewLabel_1_1_2_1_1_1_1);</span>
+		
+<span class="nc" id="L284">		JButton btnData_1_1_1_1 = new JButton(&quot;Pie Chart&quot;);</span>
+<span class="nc" id="L285">		btnData_1_1_1_1.setBackground(SystemColor.info);</span>
+<span class="nc" id="L286">		btnData_1_1_1_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L288">				List&lt;Tabela&gt; tabelas = app.sprintTime();</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">				for(Tabela t : tabelas) JOptionPane.showMessageDialog(null, t.getTabela(), t.getTitle(), JOptionPane.PLAIN_MESSAGE);	</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">				for(PieChart chart : app.pieChart(tabelas,&quot;TOTAL DE TEMPO (HORAS)&quot;)) JOptionPane.showMessageDialog(null, chart.getPanel(), chart.getInfo(), JOptionPane.PLAIN_MESSAGE);	</span>
+<span class="nc" id="L291">			}</span>
+		});
+<span class="nc" id="L293">		btnData_1_1_1_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L294">		btnData_1_1_1_1.setBounds(782, 435, 149, 40);</span>
+<span class="nc" id="L295">		frame.getContentPane().add(btnData_1_1_1_1);</span>
+		
+		//--------------------------------------------------------//
+
+		
+<span class="nc" id="L300">		JLabel lblNewLabel_1_1_2_1_1_1_1_1 = new JLabel(&quot;Custo dos recursos humanos&quot;);</span>
+<span class="nc" id="L301">		lblNewLabel_1_1_2_1_1_1_1_1.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L302">		lblNewLabel_1_1_2_1_1_1_1_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L303">		lblNewLabel_1_1_2_1_1_1_1_1.setBounds(656, 503, 346, 49);</span>
+<span class="nc" id="L304">		frame.getContentPane().add(lblNewLabel_1_1_2_1_1_1_1_1);</span>
+		
+<span class="nc" id="L306">		JButton btnData_1_1_1_1_1 = new JButton(&quot;Pie Chart&quot;);</span>
+<span class="nc" id="L307">		btnData_1_1_1_1_1.setBackground(SystemColor.info);</span>
+<span class="nc" id="L308">		btnData_1_1_1_1_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L310">				List&lt;Tabela&gt; tabelas = app.humanResourcesCost();</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">				for(Tabela t : tabelas) JOptionPane.showMessageDialog(null, t.getTabela(), t.getTitle(), JOptionPane.PLAIN_MESSAGE);	</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">				for(PieChart chart : app.pieChart(tabelas,&quot;CUSTO RECURSOS HUMANOS (€)&quot;)) JOptionPane.showMessageDialog(null, chart.getPanel(), chart.getInfo(), JOptionPane.PLAIN_MESSAGE);	</span>
+<span class="nc" id="L313">			}</span>
+		});
+<span class="nc" id="L315">		btnData_1_1_1_1_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L316">		btnData_1_1_1_1_1.setBounds(788, 548, 149, 40);</span>
+<span class="nc" id="L317">		frame.getContentPane().add(btnData_1_1_1_1_1);</span>
+		
+<span class="nc" id="L319">		JButton btnData_1_1_1_1_1_1 = new JButton(&quot;CSV&quot;);</span>
+<span class="nc" id="L320">		btnData_1_1_1_1_1_1.setBackground(SystemColor.info);</span>
+<span class="nc" id="L321">		btnData_1_1_1_1_1_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+				try {
+<span class="nc" id="L324">					app.toCSV();</span>
+<span class="nc" id="L325">				} catch (IOException e1) {</span>
+					// TODO Auto-generated catch block
+<span class="nc" id="L327">					e1.printStackTrace();</span>
+				}
+<span class="nc" id="L329">			}</span>
+		});
+<span class="nc" id="L331">		btnData_1_1_1_1_1_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L332">		btnData_1_1_1_1_1_1.setBounds(45, 84, 110, 29);</span>
+<span class="nc" id="L333">		frame.getContentPane().add(btnData_1_1_1_1_1_1);</span>
+		
+<span class="nc" id="L335">		JLabel lblNewLabel_1_1_2_1_1_1_1_1_1 = new JLabel(&quot;Para CSV&quot;);</span>
+<span class="nc" id="L336">		lblNewLabel_1_1_2_1_1_1_1_1_1.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L337">		lblNewLabel_1_1_2_1_1_1_1_1_1.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 16));</span>
+<span class="nc" id="L338">		lblNewLabel_1_1_2_1_1_1_1_1_1.setBounds(45, 40, 102, 49);</span>
+<span class="nc" id="L339">		frame.getContentPane().add(lblNewLabel_1_1_2_1_1_1_1_1_1);</span>
+		
+<span class="nc" id="L341">		JLabel lblNewLabel_1_1_2_1_1_1_1_1_2 = new JLabel(&quot;Atividades que originaram artefactos&quot;);</span>
+<span class="nc" id="L342">		lblNewLabel_1_1_2_1_1_1_1_1_2.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L343">		lblNewLabel_1_1_2_1_1_1_1_1_2.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L344">		lblNewLabel_1_1_2_1_1_1_1_1_2.setBounds(40, 624, 371, 49);</span>
+<span class="nc" id="L345">		frame.getContentPane().add(lblNewLabel_1_1_2_1_1_1_1_1_2);</span>
+		
+<span class="nc" id="L347">		JButton btnData_1_1_1_1_2 = new JButton(&quot;Tabela&quot;);</span>
+<span class="nc" id="L348">		btnData_1_1_1_1_2.setBackground(SystemColor.info);</span>
+<span class="nc" id="L349">		btnData_1_1_1_1_2.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L351">				List&lt;Tabela&gt; tabelas = app.artifact();</span>
+<span class="nc bnc" id="L352" title="All 2 branches missed.">				for(Tabela t : tabelas) JOptionPane.showMessageDialog(null, t.getTabela(), t.getTitle(), JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L353">			}</span>
+		});
+<span class="nc" id="L355">		btnData_1_1_1_1_2.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L356">		btnData_1_1_1_1_2.setBounds(45, 668, 149, 40);</span>
+<span class="nc" id="L357">		frame.getContentPane().add(btnData_1_1_1_1_2);</span>
+		
+<span class="nc" id="L359">		JLabel lblNewLabel_1_1_2_1_1_1_1_1_3 = new JLabel(&quot;Atividades que não originaram artefactos&quot;);</span>
+<span class="nc" id="L360">		lblNewLabel_1_1_2_1_1_1_1_1_3.setForeground(new Color(255, 250, 240));</span>
+<span class="nc" id="L361">		lblNewLabel_1_1_2_1_1_1_1_1_3.setFont(new Font(&quot;Century Gothic&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L362">		lblNewLabel_1_1_2_1_1_1_1_1_3.setBounds(533, 613, 433, 49);</span>
+<span class="nc" id="L363">		frame.getContentPane().add(lblNewLabel_1_1_2_1_1_1_1_1_3);</span>
+		
+<span class="nc" id="L365">		JButton btnData_1_1_1_1_2_1 = new JButton(&quot;Tabela&quot;);</span>
+<span class="nc" id="L366">		btnData_1_1_1_1_2_1.setBackground(SystemColor.info);</span>
+<span class="nc" id="L367">		btnData_1_1_1_1_2_1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L369">				List&lt;Tabela&gt; tabelas = app.noArtifact();</span>
+<span class="nc bnc" id="L370" title="All 2 branches missed.">				for(Tabela t : tabelas) JOptionPane.showMessageDialog(null, t.getTabela(), t.getTitle(), JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L371">			}</span>
+		});
+<span class="nc" id="L373">		btnData_1_1_1_1_2_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.PLAIN, 15));</span>
+<span class="nc" id="L374">		btnData_1_1_1_1_2_1.setBounds(785, 660, 149, 40);</span>
+<span class="nc" id="L375">		frame.getContentPane().add(btnData_1_1_1_1_2_1);</span>
+		
+		//--------------------------------------------------------//
+		
+		
+<span class="nc" id="L380">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span>java (08/12/2021 11:29:42)</div></body></html>

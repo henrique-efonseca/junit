@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>TrelloAPI.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (08/12/2021 11:29:42)</a> &gt; <a href="../../index.html" class="el_group">ScrumDashboard</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">Backend</a> &gt; <span class="el_source">TrelloAPI.java</span></div><h1>TrelloAPI.java</h1><pre class="source lang-java linenums">package Backend;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+
+import com.julienvey.trello.Trello;
+import com.julienvey.trello.domain.Action;
+import com.julienvey.trello.domain.Board;
+import com.julienvey.trello.domain.Card;
+import com.julienvey.trello.domain.Label;
+import com.julienvey.trello.domain.Member;
+import com.julienvey.trello.domain.TList;
+import com.julienvey.trello.impl.TrelloImpl;
+import com.julienvey.trello.impl.http.ApacheHttpClient;
+
+import Frontend.PieChart;
+import Frontend.Sprint;
+import Frontend.Tabela;
+
+/**
+ *Trello API 
+ *@author Ricardo Paulo
+ *@author Henrique Fonseca
+ *@version 1.0
+ */
+
+<span class="fc" id="L41">public class TrelloAPI </span>
+{
+	private String trelloKey;
+    private String trelloAccessToken;
+    private String boardID;
+    private Trello trelloApi;
+    private Board board;
+    private List&lt;Member&gt; nomes;
+    private List&lt;TList&gt; lists;
+    private List&lt;Card&gt; cards;
+<span class="fc" id="L51">    private List&lt;Tabela&gt; tempo = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L52">    private List&lt;Sprint&gt; sprints = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L53">    private HashMap&lt;String, Double&gt; totalTime = new HashMap&lt;String, Double&gt;();</span>
+    
+   /**
+    * Exports each team element information to a .csv file 
+    * @throws IOException
+    */
+    public File toCSV() throws IOException{
+<span class="fc" id="L60">    	List&lt;Tabela&gt; tabelas = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L61">    	tabelas.addAll(sprintTime());</span>
+<span class="fc" id="L62">    	tabelas.addAll(humanResourcesCost());</span>
+<span class="fc" id="L63">    	tabelas.addAll(artifact());</span>
+<span class="fc" id="L64">    	tabelas.addAll(noArtifact());</span>
+    	
+<span class="fc" id="L66">    		File file = new File(&quot;Data.csv&quot;); </span>
+<span class="fc" id="L67">    		file.createNewFile();</span>
+<span class="fc" id="L68">        	try (FileWriter csv = new FileWriter(file)) {</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">				for(Tabela tabela: tabelas){</span>
+					//csv.write(tabela.getTitle()+&quot;\n&quot;);
+<span class="fc bfc" id="L71" title="All 2 branches covered.">					for(int i = 0; i&lt;nomes.size(); i++){</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">							for(int j = 0; j&lt;tabela.getCol();j++) csv.write(tabela.getObject(i,j)+&quot;,&quot;);</span>
+							
+<span class="fc" id="L74">						csv.write(tabela.getTitle()+&quot;\n&quot;);</span>
+					}
+<span class="fc" id="L76">					csv.write(&quot;\n&quot;);</span>
+				}
+			}
+<span class="fc" id="L79">			return file;				</span>
+        
+	}
+    
+    /**
+     * @return
+     * returns a table with the times that each member worked on cards that didn't originated artificats on github
+     * 
+     */
+    
+    public List&lt;Tabela&gt; noArtifact(){
+<span class="fc" id="L90">    	HashMap&lt;String, Double&gt; horas = new HashMap&lt;String, Double&gt;();</span>
+<span class="fc" id="L91">    	HashMap&lt;String, Integer&gt; atividades = new HashMap&lt;String, Integer&gt;();</span>
+<span class="fc" id="L92">    	HashMap&lt;String, Double&gt; lixo = new HashMap&lt;String, Double&gt;();</span>
+<span class="fc" id="L93">    	int row = 0;</span>
+
+<span class="fc bfc" id="L95" title="All 2 branches covered.">    	for(Member m: nomes){</span>
+<span class="fc" id="L96">    		horas.put(m.getUsername(),0.0);</span>
+<span class="fc" id="L97">    		atividades.put(m.getUsername(),0);</span>
+<span class="fc" id="L98">    		lixo.put(m.getUsername(),0.0);</span>
+<span class="fc" id="L99">    		row++;</span>
+    	}
+<span class="fc" id="L101">    	tempo = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">	    	for(Card c : cards){</span>
+<span class="fc" id="L103">	    		int noArtifact=1;</span>
+<span class="fc" id="L104">	    		List&lt;Label&gt; labels = c.getLabels();</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">			    	for(Label l : labels){</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">			    			if(l.getName().equals(&quot;Commit&quot;)){</span>
+<span class="fc" id="L107">			    				noArtifact=0;</span>
+			    			}
+			    	}
+<span class="fc bfc" id="L110" title="All 2 branches covered.">			    	if(noArtifact==1) {</span>
+<span class="fc" id="L111">	    				totalTime(c,horas);</span>
+<span class="fc" id="L112">			    		contarAtividades(c,atividades);</span>
+			    	}
+			    	
+			}   
+	    	
+<span class="fc" id="L117">	    	Tabela t = new Tabela(&quot;No Artifact&quot;, row+1, 4);</span>
+<span class="fc" id="L118">	    	t.addColumnName(&quot;Username&quot;,0);</span>
+<span class="fc" id="L119">	    	t.addColumnName(&quot;Numero atividades&quot;,1);</span>
+<span class="fc" id="L120">	    	t.addColumnName(&quot;Tempo total (horas)&quot;,2);</span>
+<span class="fc" id="L121">	    	t.addColumnName(&quot;Custo (€)&quot;,3);</span>
+<span class="fc" id="L122">	    	int x=0;</span>
+	    	
+<span class="fc bfc" id="L124" title="All 2 branches covered.">	    	for(Member m: nomes){</span>
+<span class="fc" id="L125">	    		t.addData(m.getUsername(),x,0);</span>
+<span class="fc" id="L126">	    		t.addData(atividades.get(m.getUsername()),x,1);</span>
+<span class="fc" id="L127">	    		t.addData(horas.get(m.getUsername())/60,x,2);</span>
+<span class="fc" id="L128">	    		t.addData((horas.get(m.getUsername())/60)*20,x,3);</span>
+<span class="fc" id="L129">	    		x++;</span>
+	    	}
+		
+<span class="fc" id="L132">	    int atividadesTotal=0;</span>
+<span class="fc" id="L133">    	double horasTotal=0.0;</span>
+<span class="fc" id="L134">    	double custoTotal=0.0;</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">    	for(Member m: nomes){</span>
+<span class="fc" id="L136">    		atividadesTotal+=atividades.get(m.getUsername());</span>
+<span class="fc" id="L137">    		horasTotal+=horas.get(m.getUsername());</span>
+<span class="fc" id="L138">    		custoTotal+=horas.get(m.getUsername())*20;</span>
+	    } 
+<span class="fc" id="L140">    	t.addData(&quot;Total&quot;,x,0);</span>
+<span class="fc" id="L141">		t.addData(atividadesTotal,x,1);</span>
+<span class="fc" id="L142">		t.addData(horasTotal/60,x,2);</span>
+<span class="fc" id="L143">		t.addData(custoTotal/60,x,3);</span>
+<span class="fc" id="L144">	  	t.createScrollPane();</span>
+<span class="fc" id="L145">    	tempo.add(t);</span>
+
+<span class="fc" id="L147">    	return tempo;</span>
+    }
+    
+    
+    
+    /**
+     * calculates the number of card a member worked on
+     * @return
+     * 
+     * @param s1
+     * Card
+     * 
+     * @param s2
+     * HashMap with a member and the number card he worked on
+     * 
+     */
+    public List&lt;Tabela&gt; artifact(){
+<span class="fc" id="L164">    	HashMap&lt;String, Double&gt; horas = new HashMap&lt;String, Double&gt;();</span>
+<span class="fc" id="L165">    	HashMap&lt;String, Integer&gt; atividades = new HashMap&lt;String, Integer&gt;();</span>
+
+<span class="fc bfc" id="L167" title="All 2 branches covered.">    	for(Member m: nomes){</span>
+<span class="fc" id="L168">    		horas.put(m.getUsername(),0.0);</span>
+<span class="fc" id="L169">    		atividades.put(m.getUsername(),0);</span>
+    	}
+    
+<span class="fc" id="L172">    	tempo = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">	    	for(Card c : cards){</span>
+<span class="fc" id="L174">	    		List&lt;Label&gt; labels = c.getLabels();</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">			    	for(Label l : labels)</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">			    			if(l.getName().equals(&quot;Commit&quot;)){</span>
+<span class="fc" id="L177">			    				totalTime(c,horas);</span>
+<span class="fc" id="L178">					    		contarAtividades(c,atividades);			    	</span>
+			    			}		    	
+			}   
+	    	
+<span class="fc" id="L182">	    	Tabela t = new Tabela(&quot;Artifact&quot;, nomes.size()+1, 4);</span>
+<span class="fc" id="L183">	    	t.addColumnName(&quot;Username&quot;,0);</span>
+<span class="fc" id="L184">	    	t.addColumnName(&quot;Numero atividades&quot;,1);</span>
+<span class="fc" id="L185">	    	t.addColumnName(&quot;Tempo total (horas)&quot;,2);</span>
+<span class="fc" id="L186">	    	t.addColumnName(&quot;Custo (€)&quot;,3);</span>
+	    	
+<span class="fc" id="L188">	    	int x=0;</span>
+	    	
+<span class="fc bfc" id="L190" title="All 2 branches covered.">	    	for(Member m: nomes){</span>
+<span class="fc" id="L191">	    		t.addData(m.getUsername(),x,0);</span>
+<span class="fc" id="L192">	    		t.addData(atividades.get(m.getUsername()),x,1);</span>
+<span class="fc" id="L193">	    		t.addData(horas.get(m.getUsername())/60,x,2);</span>
+<span class="fc" id="L194">	    		t.addData((horas.get(m.getUsername())/60)*20,x,3);</span>
+<span class="fc" id="L195">	    		x++;</span>
+	    	}
+	    	
+<span class="fc" id="L198">	    int atividadesTotal=0;</span>
+<span class="fc" id="L199">    	double horasTotal=0.0;</span>
+<span class="fc" id="L200">    	double custoTotal=0.0;</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">    	for(Member m: nomes){</span>
+<span class="fc" id="L202">    		atividadesTotal+=atividades.get(m.getUsername());</span>
+<span class="fc" id="L203">    		horasTotal+=horas.get(m.getUsername());</span>
+<span class="fc" id="L204">    		custoTotal+=horas.get(m.getUsername())*20;</span>
+	    } 
+<span class="fc" id="L206">    	t.addData(&quot;Total&quot;,x,0);</span>
+<span class="fc" id="L207">		t.addData(atividadesTotal,x,1);</span>
+<span class="fc" id="L208">		t.addData(horasTotal/60,x,2);</span>
+<span class="fc" id="L209">		t.addData(custoTotal/60,x,3);</span>
+<span class="fc" id="L210">	  	t.createScrollPane();</span>
+<span class="fc" id="L211">    	tempo.add(t);</span>
+
+<span class="fc" id="L213">    	return tempo;</span>
+    }
+
+    /**
+    * calculates the number of card a member worked on
+    * @return
+    * 
+    * @param s1
+    * Card
+    * 
+    * @param s2
+    * HashMap with a member and the number card he worked on
+    * 
+    */
+    public void contarAtividades(Card c, HashMap&lt;String, Integer&gt; atividades){
+      	
+<span class="fc" id="L229">		List&lt;Action&gt; actions = c.getActions();</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">		for (Action a : actions){</span>
+<span class="fc" id="L231">			String temp = a.getData().getText();</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">			for(Member m : nomes){</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">				if(temp!=null </span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">					&amp;&amp; temp.contains(&quot;plus!&quot;) </span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">				    &amp;&amp; ( temp.contains(m.getUsername())</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">			    	|| temp.contains(&quot;global&quot;))){</span>
+<span class="fc" id="L237">						atividades.put(m.getUsername(),atividades.get(m.getUsername())+1);						</span>
+				}
+			}
+		}		    		
+<span class="fc" id="L241">	return;</span>
+}
+    
+    /**
+     * 
+     * @return
+     * creates a pie chart
+     * 
+     * @param s1
+     * List with tables
+     * @param s2 
+     * Title
+     */
+    public List&lt;PieChart&gt; pieChart(List&lt;Tabela&gt; tabelas, String info){
+<span class="nc" id="L255">    	List&lt;PieChart&gt; charts = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">    	for(Tabela t: tabelas){	</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">    		for(int x=1; x&lt;t.getCol(); x++){</span>
+<span class="nc" id="L258">    			PieChart pie = new PieChart(t,info);</span>
+<span class="nc" id="L259">    			String title=&quot;Realizadas&quot;;</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">    			if(x==2) title = &quot;Estimadas&quot;;</span>
+<span class="nc" id="L261">    			pie.createChart(nomes,0,x,title);</span>
+<span class="nc" id="L262">    			charts.add(pie);</span>
+    		}
+    	}
+<span class="nc" id="L265">    	return charts;</span>
+    }
+       
+    
+    /**
+     * 
+     * @return
+     * returns the the total labour cost (related to the work time) for each member
+     */
+    public List&lt;Tabela&gt; humanResourcesCost(){
+<span class="fc" id="L275">    	List&lt;Tabela&gt; cost = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L276">    	tempo = sprintTime();</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">    	for(Tabela temp : tempo){</span>
+<span class="fc" id="L278">    		Tabela t = new Tabela(temp.getTitle(), nomes.size(), 2);</span>
+<span class="fc" id="L279">    		t.addColumnName(&quot;Username&quot;,0);</span>
+<span class="fc" id="L280">	    	t.addColumnName(&quot;Custo recursos humanos (€)&quot;,1);</span>
+<span class="fc" id="L281">	    	t.createScrollPane();</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">    		for(int x=0; x&lt;nomes.size();x++){</span>
+<span class="fc" id="L283">    			t.addData((String) temp.getObject(x,0),x,0);</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">    			for(int y = 1; y&lt;2;y++) t.addData(((double) temp.getObject(x,y))*20.0,x,y);   				</span>
+    		}
+<span class="fc" id="L286">    		cost.add(t);</span>
+    	}   	
+<span class="fc" id="L288">    	return cost;</span>
+    }
+   
+
+    /**
+     * 
+     * @return
+     * returns the predicted time and the total work time for every sprint
+     */
+    
+    public List&lt;Tabela&gt; sprintTime(){
+    
+<span class="fc" id="L300">    	tempo = new ArrayList&lt;&gt;();</span>
+    	
+<span class="fc bfc" id="L302" title="All 2 branches covered.">    	for(Member m: nomes) totalTime.put(m.getUsername(),0.0);</span>
+       		
+<span class="fc bfc" id="L304" title="All 2 branches covered.">    	for(Sprint sprint: sprints){	</span>
+			
+
+<span class="fc" id="L307">    		sprint.addTimes(nomes);		  </span>
+<span class="fc" id="L308">	    	Tabela t = new Tabela(sprint.getName(), nomes.size(), 3);</span>
+	    	
+<span class="fc" id="L310">	    	t.addColumnName(&quot;Username&quot;,0);</span>
+<span class="fc" id="L311">	    	t.addColumnName(&quot;Tempo realizado (horas)&quot;,1);</span>
+<span class="fc" id="L312">	    	t.addColumnName(&quot;Tempo previsto (horas)&quot;,2);</span>
+	    	
+<span class="fc" id="L314">	    	int x=0;   	</span>
+<span class="fc bfc" id="L315" title="All 2 branches covered.">	    	for(Member m: nomes){</span>
+<span class="fc" id="L316">	    		t.addData(m.getUsername(),x,0);</span>
+<span class="fc" id="L317">	    		t.addData(sprint.getActualTime(m)/60,x,1);</span>
+<span class="fc" id="L318">	    		t.addData(sprint.getEstimatedTime(m)/60,x,2);</span>
+<span class="fc" id="L319">	    		x++;</span>
+	    	}
+	    	
+<span class="fc" id="L322">	    	t.createScrollPane();</span>
+<span class="fc" id="L323">	    	tempo.add(t);</span>
+	    }
+    	
+<span class="fc" id="L326">		Tabela t = new Tabela(&quot;Total&quot;, nomes.size(), 2);</span>
+<span class="fc" id="L327">		t.addColumnName(&quot;Username&quot;,0);</span>
+<span class="fc" id="L328">    	t.addColumnName(&quot;Tempo total (min)&quot;,1);</span>
+<span class="fc bfc" id="L329" title="All 2 branches covered.">    	for (Card c : cards) totalTime(c,totalTime);  </span>
+<span class="fc" id="L330">    	int x=0;</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">    	for(Member m: nomes){</span>
+<span class="fc" id="L332">    		t.addData(m.getUsername(),x,0);</span>
+<span class="fc" id="L333">    		t.addData(totalTime.get(m.getUsername())/60,x,1);</span>
+<span class="fc" id="L334">    		x++;</span>
+	    }   	
+<span class="fc" id="L336">    	t.createScrollPane();</span>
+    	
+<span class="fc" id="L338">    	tempo.add(t);</span>
+<span class="fc" id="L339">    	return tempo;</span>
+    }
+    
+    /**
+     *calculates the time that a member spent on a given card and then adds it to the total work time of the member
+     * @return
+     *  
+     * @param s1 
+     * Card
+     * 
+     *  @param s2
+     *  hashMap with the members and his total work time
+     */
+    public void totalTime(Card c, HashMap&lt;String, Double&gt; total){
+      	
+<span class="fc" id="L354">			List&lt;Action&gt; actions = c.getActions();</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">			for (Action a : actions){</span>
+<span class="fc" id="L356">				String temp = a.getData().getText();</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">				for(Member m : nomes){</span>
+<span class="fc bfc" id="L358" title="All 2 branches covered.">					if(temp!=null </span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">						&amp;&amp; temp.contains(&quot;plus!&quot;) </span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">					    &amp;&amp; ( temp.contains(m.getUsername())</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">				    	|| temp.contains(&quot;global&quot;))){</span>
+<span class="fc" id="L362">							String[] arrOfStr = temp.split(&quot; &quot;, 3);</span>
+<span class="fc" id="L363">							String[] previstas_realizadas = arrOfStr[2].split(&quot;/&quot;,2);</span>
+<span class="fc" id="L364">							total.put(m.getUsername(),total.get(m.getUsername())+Double.parseDouble(previstas_realizadas[0]));</span>
+					}
+				}
+			}		    		
+<span class="fc" id="L368">		return;</span>
+    }
+   
+   /**
+     * returns the start and end date for each created function as a String
+     * @return
+     * the start and end date for each created function as a String
+     */
+    public String functionDate(){
+<span class="fc" id="L377">    	String s=&quot;&quot;;</span>
+<span class="fc bfc" id="L378" title="All 2 branches covered.">    	for (Card c : cards) {</span>
+<span class="fc" id="L379">    		List&lt;Label&gt; labels = c.getLabels();</span>
+<span class="fc bfc" id="L380" title="All 4 branches covered.">			for (Label l : labels) if(l.getName().equals(&quot;function&quot;)) s+=c.getName()+&quot;:\n&quot; + c.getDesc() + &quot;\n\r&quot;;		</span>
+    	}
+<span class="fc" id="L382">    	return s;</span>
+    }
+
+   /**
+     * Returns, for each sprint, the result conclusions text
+     * @return
+     * a String with every Sprint text
+     */
+    //MELHORAR COM O GETLIST PELO ID
+    public String sprintsText(){
+<span class="fc" id="L392">    	String txt = &quot;&quot;;</span>
+<span class="fc bfc" id="L393" title="All 2 branches covered.">    	for(Sprint sprint : sprints){</span>
+<span class="fc" id="L394">    		txt += sprint.getName().toUpperCase() + &quot;\n\r&quot;;</span>
+<span class="fc" id="L395">    		String planning=&quot;PLANNING\n&quot;;</span>
+<span class="fc" id="L396">        	String review=&quot;REVIEW\n&quot;;</span>
+<span class="fc" id="L397">        	String retrospective=&quot;RETROSPECTIVE\n&quot;;</span>
+<span class="fc" id="L398">    		List&lt;Card&gt; cards = sprint.getCards();</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">    		for(Card card : cards){</span>
+<span class="fc bfc" id="L400" title="All 2 branches covered.">    				if(card.getIdList().equals(getListId(&quot;Sprint Planning&quot;))) planning+=card.getDesc();</span>
+<span class="fc bfc" id="L401" title="All 2 branches covered.">    				if(card.getIdList().equals(getListId(&quot;Sprint Review&quot;))) review+=card.getDesc();</span>
+<span class="fc bfc" id="L402" title="All 2 branches covered.">    				if(card.getIdList().equals(getListId(&quot;Sprint Retrospective&quot;))) retrospective+=card.getDesc();</span>
+    			}
+    		
+<span class="fc" id="L405">    		txt+=planning+&quot;\n\r&quot;+review+&quot;\n\r&quot;+retrospective+&quot;\n\r&quot;;</span>
+    	}
+<span class="fc" id="L407">    	return txt;</span>
+    }
+   
+   /**
+     * Returns a String with every Product Backlog item for each Sprint
+     * @return
+     * every Product Backlog item for each Sprint as a String
+     */
+    public String productBacklog(){
+<span class="fc" id="L416">    	String s=&quot;&quot;;</span>
+    	
+<span class="fc bfc" id="L418" title="All 2 branches covered.">    	for(Sprint sprint : sprints){</span>
+<span class="fc" id="L419">    		List&lt;Card&gt; cards = sprint.getCards();</span>
+<span class="fc" id="L420">    		s+=sprint.getText().toUpperCase();</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">    		for(Card card : cards)</span>
+<span class="pc bpc" id="L422" title="1 of 2 branches missed.">    			if(card.getIdList().equals(getListId(&quot;Product Backlog&quot;))) </span>
+<span class="nc" id="L423">    				s+=card.getName()+&quot;\n&quot;;</span>
+<span class="fc" id="L424">    		s+=&quot;\n&quot;;   		</span>
+    	}
+<span class="fc" id="L426">    	return s;</span>
+    }
+    
+    public List&lt;Card&gt; getCardsOfList(String name){
+<span class="fc" id="L430">    	List&lt;Card&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L431">    	String id =&quot;&quot;;</span>
+<span class="fc bfc" id="L432" title="All 4 branches covered.">    	for (TList l : lists) if(l.getName().contains(name)) id = l.getId();</span>
+<span class="fc bfc" id="L433" title="All 4 branches covered.">    	for(Card c : cards) if(c.getIdList().equals(id)) list.add(c);</span>
+<span class="fc" id="L434">    	return list;</span>
+    }
+    
+    private String getListId(String name){
+<span class="pc bpc" id="L438" title="1 of 4 branches missed.">    	for (TList l : lists) if(l.getName().contains(name)) return l.getId();</span>
+<span class="nc" id="L439">    	return &quot;&quot;;</span>
+    }
+    
+    public void setSprints(){
+<span class="fc" id="L443">    	List&lt;Card&gt; list = getCardsOfList(&quot;Sprint Planning&quot;);</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">    	for(Card c : list){ </span>
+<span class="fc" id="L445">    		Sprint s = new Sprint(c.getName());</span>
+<span class="fc" id="L446">    		String[] data = c.getDesc().split(&quot;___&quot;,3);</span>
+<span class="fc" id="L447">    		s.setDate(data[1]);</span>
+<span class="fc" id="L448">    		sprints.add(s);</span>
+    	}
+<span class="fc" id="L450">     	addCardsToSprint();</span>
+<span class="fc" id="L451">    } </span>
+  
+    /**
+     * Returns a List&lt;String&gt; with every sprint
+     * @return
+     * a List&lt;String&gt; with every sprint
+     */  
+    public List&lt;Sprint&gt; getSprints(){
+<span class="fc" id="L459">    	return sprints;	</span>
+    }
+    
+    public void addCardsToSprint(){
+<span class="fc bfc" id="L463" title="All 2 branches covered.">    	for(Card card : cards){</span>
+<span class="fc" id="L464">    		List&lt;Label&gt; labels = card.getLabels();</span>
+<span class="fc bfc" id="L465" title="All 2 branches covered.">    		for(Label l : labels){</span>
+<span class="fc" id="L466">    			Sprint s = getSprint(l.getName());</span>
+<span class="fc bfc" id="L467" title="All 2 branches covered.">    			if(s!=null) s.addCard(card);</span>
+    		}
+    	}
+<span class="fc" id="L470">    }</span>
+    
+   
+    public Sprint getSprint(String name){
+<span class="fc bfc" id="L474" title="All 4 branches covered.">    	for(Sprint s : sprints) if(s.getName().equals(name)) return s;</span>
+<span class="fc" id="L475">    	return null;</span>
+    }
+    
+   /**
+     * returns the date project has started as a String
+     * @return
+     * project start date as a String
+     */
+    public String projectDate(){
+<span class="pc bpc" id="L484" title="1 of 4 branches missed.">    	for(Card c : cards) if(c.getName().equals(&quot;Data de inicio do projeto&quot;)) return c.getDue().toString();</span>
+<span class="nc" id="L485">    	return null;</span>
+    }	
+    
+
+
+    /**
+     * Returns the project ID as a String
+     * @return
+     * Project ID as a String
+     */
+	public String projectID(){
+<span class="fc" id="L496">    	 return board.getName()+ &quot; - id: &quot; +board.getId();</span>
+    }
+  
+    /**
+     * Creates a new Card in an existing List
+     * @param s
+     * List name where the card will be created
+     * @param card_name
+     * New card name
+     */   
+    public void createBoard(String s, String card_name){
+<span class="nc bnc" id="L507" title="All 2 branches missed.">	    for (TList l : lists) {</span>
+<span class="nc bnc" id="L508" title="All 2 branches missed.">	    	if(l.getName().equals(s)){</span>
+<span class="nc" id="L509">	    		Card c = new Card();</span>
+<span class="nc" id="L510">	    		c.setName(card_name);</span>
+<span class="nc" id="L511">	    		trelloApi.createCard(l.getId(),c);</span>
+<span class="nc" id="L512">	    		return;</span>
+	    	}
+	    }
+<span class="nc" id="L515">    }</span>
+  
+    /**
+     * Returns A string with all Lists at this Trello project
+     * @return
+     * All Lists in the Trello project as a String
+     */    
+    public String lists(){ 	
+<span class="nc" id="L523">    	 String string = &quot;&quot;;</span>
+<span class="nc bnc" id="L524" title="All 2 branches missed.">         for (TList list : lists) {</span>
+<span class="nc" id="L525">          	 string += list.getName() + &quot;\r\n&quot;;</span>
+         }
+<span class="nc" id="L527">         return string;</span>
+    }
+    
+    /**
+     * Returns a String with all project members
+     * @return
+     * All project members as a String
+     */
+	public String members(){
+<span class="fc" id="L536">		String string = &quot;&quot;;</span>
+<span class="fc bfc" id="L537" title="All 2 branches covered.">	    for (Member names : nomes) {</span>
+<span class="fc" id="L538">	    	string += names.getUsername() + &quot;\r\n&quot;;</span>
+	    	
+	    }
+<span class="fc" id="L541">	    return string;</span>
+	}
+	
+	/**
+	 * Connects to a Trello project
+	 * @param s1
+	 * Trello key
+	 * @param s2
+	 * Trello Access Token
+	 * @param s3
+	 * Trello board ID
+	 */
+	public void setUp(String s1, String s2, String s3){
+<span class="fc" id="L554">    	trelloKey = s1;</span>
+<span class="fc" id="L555">    	trelloAccessToken = s2;</span>
+<span class="fc" id="L556">    	boardID = s3;</span>
+<span class="fc" id="L557">    	trelloApi = new TrelloImpl(trelloKey, trelloAccessToken, new ApacheHttpClient());</span>
+<span class="fc" id="L558">    	board = trelloApi.getBoard(boardID);</span>
+<span class="fc" id="L559">    	nomes = board.fetchMembers();</span>
+<span class="fc" id="L560">    	lists = board.fetchLists();</span>
+<span class="fc" id="L561">    	cards = board.fetchCards();</span>
+<span class="fc" id="L562">    	setSprints();</span>
+<span class="fc" id="L563">    }</span>
+	
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span>java (08/12/2021 11:29:42)</div></body></html>

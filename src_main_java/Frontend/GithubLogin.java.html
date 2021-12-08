@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>GithubLogin.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (08/12/2021 11:29:42)</a> &gt; <a href="../../index.html" class="el_group">ScrumDashboard</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">Frontend</a> &gt; <span class="el_source">GithubLogin.java</span></div><h1>GithubLogin.java</h1><pre class="source lang-java linenums">package Frontend;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+public class GithubLogin extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_1;
+	private Github git;
+	private GUI mainScreen;
+	private JTextField textField_2;
+
+<span class="nc" id="L28">	private String defaul_token =&quot;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&quot;;</span>
+<span class="nc" id="L29">	private String defaul_repo= &quot;henrique-efonseca/ES-LETI-1Sem-2021-Grupo3&quot;;</span>
+  
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+<span class="nc" id="L36">		EventQueue.invokeLater(new Runnable() {</span>
+			public void run() {
+				try {
+<span class="nc" id="L39">					GithubLogin frame = new GithubLogin();</span>
+<span class="nc" id="L40">					frame.setVisible(true);</span>
+<span class="nc" id="L41">				} catch (Exception e) {</span>
+<span class="nc" id="L42">					e.printStackTrace();</span>
+				}
+<span class="nc" id="L44">			}</span>
+		});
+<span class="nc" id="L46">	}</span>
+
+	/**
+	 * Create the frame.
+	 */
+<span class="nc" id="L51">	public GithubLogin() {</span>
+<span class="nc" id="L52">		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L53">		setBounds(100, 100, 612, 411);</span>
+<span class="nc" id="L54">		contentPane = new JPanel();</span>
+<span class="nc" id="L55">		contentPane.setBackground(new Color(250, 235, 215));</span>
+<span class="nc" id="L56">		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));</span>
+<span class="nc" id="L57">		setContentPane(contentPane);</span>
+<span class="nc" id="L58">		contentPane.setLayout(null);</span>
+		
+<span class="nc" id="L60">		textField_1 = new JTextField();</span>
+<span class="nc" id="L61">		textField_1.setBounds(143, 122, 317, 25);</span>
+<span class="nc" id="L62">		textField_1.setColumns(10);</span>
+<span class="nc" id="L63">		textField_1.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L64">		contentPane.add(textField_1);</span>
+		
+<span class="nc" id="L66">		textField_2 = new JTextField();</span>
+<span class="nc" id="L67">		textField_2.setBounds(143, 200, 317, 25);</span>
+<span class="nc" id="L68">		textField_2.setColumns(10);</span>
+<span class="nc" id="L69">		textField_2.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L70">		contentPane.add(textField_2);</span>
+		
+<span class="nc" id="L72">		JLabel lblNewLabel_1 = new JLabel(&quot;LOGIN&quot;);</span>
+<span class="nc" id="L73">		lblNewLabel_1.setBounds(245, 31, 138, 49);</span>
+<span class="nc" id="L74">		lblNewLabel_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.BOLD, 35));</span>
+<span class="nc" id="L75">		lblNewLabel_1.setForeground(Color.DARK_GRAY);</span>
+<span class="nc" id="L76">		contentPane.add(lblNewLabel_1);</span>
+		
+<span class="nc" id="L78">		JLabel lblAccessToken = new JLabel(&quot;Access Token&quot;);</span>
+<span class="nc" id="L79">		lblAccessToken.setBounds(143, 85, 159, 43);</span>
+<span class="nc" id="L80">		lblAccessToken.setForeground(Color.DARK_GRAY);</span>
+<span class="nc" id="L81">		lblAccessToken.setFont(new Font(&quot;DialogInput&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L82">		lblAccessToken.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L83">		contentPane.add(lblAccessToken);</span>
+		
+<span class="nc" id="L85">		JLabel lblBoardId = new JLabel(&quot;Repository Name&quot;);</span>
+<span class="nc" id="L86">		lblBoardId.setBounds(143, 166, 240, 34);</span>
+<span class="nc" id="L87">		lblBoardId.setForeground(Color.DARK_GRAY);</span>
+<span class="nc" id="L88">		lblBoardId.setFont(new Font(&quot;DialogInput&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L89">		lblBoardId.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L90">		contentPane.add(lblBoardId);</span>
+		
+<span class="nc" id="L92">		JButton btnNewButton = new JButton(&quot;NEXT&quot;);</span>
+<span class="nc" id="L93">		btnNewButton.setBounds(360, 284, 100, 25);</span>
+<span class="nc" id="L94">		btnNewButton.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L96">				dispose();</span>
+<span class="nc" id="L97">			    git = new Github();</span>
+			    try {	
+<span class="nc bnc" id="L99" title="All 4 branches missed.">			    	if(!textField_1.getText().isEmpty() &amp;&amp; !textField_2.getText().isEmpty()) git.iniciar(textField_1.getText(),textField_2.getText());</span>
+<span class="nc" id="L100">			    	else git.iniciar(defaul_token,defaul_repo);</span>
+<span class="nc" id="L101">				} catch (IOException e1) {</span>
+					// TODO Auto-generated catch block
+<span class="nc" id="L103">					e1.printStackTrace();</span>
+				}
+<span class="nc" id="L105">				git.getFrame().setVisible(true);</span>
+<span class="nc" id="L106">			}</span>
+		});
+<span class="nc" id="L108">		btnNewButton.setFont(new Font(&quot;HP Simplified&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L109">		btnNewButton.setBackground(new Color(255, 255, 255));</span>
+<span class="nc" id="L110">		contentPane.add(btnNewButton);</span>
+		
+<span class="nc" id="L112">		JButton btnCancel = new JButton(&quot;CANCEL&quot;);</span>
+<span class="nc" id="L113">		btnCancel.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L115">				dispose();</span>
+<span class="nc" id="L116">			    mainScreen = new GUI();</span>
+<span class="nc" id="L117">			    mainScreen.setVisible(true);</span>
+<span class="nc" id="L118">			}</span>
+		});
+<span class="nc" id="L120">		btnCancel.setFont(new Font(&quot;HP Simplified&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L121">		btnCancel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L122">		btnCancel.setBounds(143, 284, 100, 25);</span>
+<span class="nc" id="L123">		contentPane.add(btnCancel);</span>
+		
+<span class="nc" id="L125">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span>java (08/12/2021 11:29:42)</div></body></html>

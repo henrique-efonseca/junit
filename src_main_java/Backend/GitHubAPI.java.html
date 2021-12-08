@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>GitHubAPI.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (08/12/2021 11:29:42)</a> &gt; <a href="../../index.html" class="el_group">ScrumDashboard</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">Backend</a> &gt; <span class="el_source">GitHubAPI.java</span></div><h1>GitHubAPI.java</h1><pre class="source lang-java linenums">package Backend;
+
+import java.awt.EventQueue;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.kohsuke.github.GHBranch;
+import org.kohsuke.github.GHCommit;
+import org.kohsuke.github.GHCommit.ShortInfo;
+import org.kohsuke.github.GHCommitComment;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHTag;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
+import org.kohsuke.github.PagedIterable;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.julienvey.trello.domain.Member;
+/**
+ * GitHub API
+ * 
+ * @author Bernardo Bento
+ * @author Ricardo Paulo
+ * @author Henrique Fonseca
+ * @version 1.0 
+ * 
+ */
+
+<span class="fc" id="L36">	public class GitHubAPI {</span>
+		private GHRepository repository; 
+		private  GitHub github;
+		
+		/**
+		 * Return all commits made by person and in chronological order as a String
+		 * @return
+		 * All commits as a String
+		 * @throws IOException
+		 */
+		public String commits() throws IOException{
+			
+<span class="fc" id="L48">			HashMap&lt;String, String&gt; commit_map = new HashMap&lt;String, String&gt;();</span>
+<span class="fc" id="L49">			Set&lt;GHUser&gt; names = repository.getCollaborators();</span>
+<span class="fc" id="L50">			PagedIterable&lt;GHCommit&gt; commits = repository.listCommits();</span>
+<span class="fc" id="L51">			String s = &quot;COMMITS \n\r&quot;;</span>
+			
+<span class="fc bfc" id="L53" title="All 2 branches covered.">			for(GHUser m : names) commit_map.put(m.getName(),m.getName()+&quot;\n&quot;);</span>
+	    	
+		
+<span class="fc bfc" id="L56" title="All 2 branches covered.">				for(GHCommit commit : commits){</span>
+<span class="pc bpc" id="L57" title="1 of 4 branches missed.">					if(commit.getCommitter().getName() != null &amp;&amp; !commit.getCommitter().getName().equals(&quot;GitHub Web Flow&quot;)){</span>
+<span class="fc" id="L58">							String c= &quot;&quot;;</span>
+<span class="fc" id="L59">							c+=commit.getCommitDate().toString()+&quot;\n&quot;;</span>
+<span class="fc" id="L60">							c+=commit.getCommitShortInfo().getMessage()+&quot;\n&quot;;</span>
+						
+<span class="fc" id="L62">							PagedIterable&lt;GHBranch&gt; branch= commit.listBranchesWhereHead();</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">							for(GHBranch b : branch){</span>
+<span class="fc" id="L64">							c+=b.getName()+&quot;\n&quot;;</span>
+							} 
+<span class="fc" id="L66">							commit_map.put(commit.getCommitter().getName(), commit_map.get(commit.getCommitter().getName())+c+&quot;\n&quot;);</span>
+						
+					}
+				}
+<span class="fc bfc" id="L70" title="All 2 branches covered.">				for(GHUser m : names) s+=commit_map.get(m.getName())+&quot;\n\r&quot;;</span>
+<span class="fc" id="L71">			System.out.println(s);	</span>
+<span class="fc" id="L72">			return s;</span>
+		} 
+
+		/**
+		 * Prints all active Branches
+		 * @throws IOException
+		 */
+		public void getActiveBranch() throws IOException{
+<span class="nc" id="L80">			Map&lt;String, GHBranch&gt; map=	repository.getBranches();</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">			for (Entry&lt;String, GHBranch&gt; entry : map.entrySet()) {</span>
+<span class="nc" id="L82">				System.out.println(&quot;Key : &quot; + entry.getKey());</span>
+			}
+<span class="nc" id="L84">		}	</span>
+		
+		/**
+		 * returns repository README.md file from GitHub as a String
+		 * 
+		 * @return 
+		 * README.md file as a String
+		 * @throws IOException
+		 */
+		
+		public String getREADME() throws IOException{
+<span class="fc" id="L95">			return repository.getReadme().getContent();</span>
+		}
+		
+		/** 
+		 * returns the Repository name as a String
+		 * @return
+		 * Repository name as a String
+		 * @throws IOException
+		 */
+		public String getRepoName() throws IOException{
+<span class="fc" id="L105">			return repository.getName();</span>
+		}
+		
+		/**
+		 * Connects with a GitHub repository
+		 * 
+		 * @param token
+		 * GitHub personal Token
+		 * @param repo
+		 * GitHub repository name 
+		 * @throws IOException
+		 */
+		public void setUp(String token, String repo) throws IOException{
+<span class="fc" id="L118">			github = new GitHubBuilder().withOAuthToken(token).build();</span>
+<span class="fc" id="L119">			repository =  github.getRepository(repo);</span>
+<span class="fc" id="L120">		}</span>
+		
+		
+		/**
+		 * @return
+		 * Returns a HashMap with every tag on the main branch and it's release date
+		 *
+		 */
+		public HashMap&lt;GHTag, String&gt; getTags() throws IOException {
+<span class="fc" id="L129">			HashMap&lt;GHTag, String&gt; tags_dates = new HashMap&lt;GHTag, String&gt;();		</span>
+<span class="fc" id="L130">			PagedIterable&lt;GHTag&gt; tags = repository.listTags();		</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">			for (GHTag tag : tags) tags_dates.put(tag, tag.getCommit().getCommitDate().toString());</span>
+<span class="fc" id="L132">			return tags_dates;</span>
+			
+		
+			
+		}
+		
+	
+	}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span>java (08/12/2021 11:29:42)</div></body></html>

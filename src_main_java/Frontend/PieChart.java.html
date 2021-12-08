@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PieChart.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (08/12/2021 11:29:42)</a> &gt; <a href="../../index.html" class="el_group">ScrumDashboard</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">Frontend</a> &gt; <span class="el_source">PieChart.java</span></div><h1>PieChart.java</h1><pre class="source lang-java linenums">package Frontend;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+
+import com.julienvey.trello.domain.Member;
+
+/**
+ *Trello API 
+ *@author Ricardo Paulo
+ *@version 1.0
+ */
+
+public class PieChart {
+
+	private Tabela tabela;
+	private String info;
+	private JPanel panel;
+	
+	/**
+	 * Constructor of a PieChart
+	 * @param t
+	 * tabela
+	 * @param info
+	 * title
+	 */
+<span class="nc" id="L35">	public PieChart(Tabela t, String info) {</span>
+		// TODO Auto-generated constructor stub
+<span class="nc" id="L37">		this.tabela=t;</span>
+<span class="nc" id="L38">		this.info=info;</span>
+<span class="nc" id="L39">	}</span>
+   /**
+    * returns info of PieChart
+    * @return
+    */
+	public String getInfo(){
+<span class="nc" id="L45">		return this.info;</span>
+	}
+	
+	/**
+	 * Creates a new Chart with a given list of names, a title, line(a) &amp; column (b)
+	 * @param nomes
+	 * @param a
+	 * @param b
+	 * @param title
+	 */
+	public void createChart(List&lt;Member&gt; nomes,int a,int b, String title){
+		JPanel panel;	
+<span class="nc" id="L57">	    DefaultPieDataset dataset = new DefaultPieDataset();	    	</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">	    for(int x=0;x&lt;nomes.size();x++)	{</span>
+	    	
+	    	
+<span class="nc" id="L61">	    	dataset.setValue((String)tabela.getObject(x,a),(Number)tabela.getObject(x,b));</span>
+	    }
+<span class="nc" id="L63">		JFreeChart chart = ChartFactory.createPieChart(</span>
+<span class="nc" id="L64">		tabela.getTitle()+&quot;\n&quot;+title,   // chart title</span>
+<span class="nc" id="L65">		dataset,          // data</span>
+<span class="nc" id="L66">		true,             // include legend</span>
+<span class="nc" id="L67">		true,</span>
+<span class="nc" id="L68">		false);</span>
+				 	            
+<span class="nc" id="L70">		this.panel=new ChartPanel(chart); 		    	</span>
+
+<span class="nc" id="L72">	}</span>
+	/**
+	 * returns a PieChart
+	 * @return
+	 */
+	public JPanel getPanel(){
+<span class="nc" id="L78">		return this.panel;</span>
+	}
+	
+}
+	
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span>java (08/12/2021 11:29:42)</div></body></html>

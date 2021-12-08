@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>TrelloLogin.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (08/12/2021 11:29:42)</a> &gt; <a href="../../index.html" class="el_group">ScrumDashboard</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">Frontend</a> &gt; <span class="el_source">TrelloLogin.java</span></div><h1>TrelloLogin.java</h1><pre class="source lang-java linenums">package Frontend;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.SystemColor;import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+
+
+public class TrelloLogin extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_1;
+	private Trello trello;
+	private GUI mainScreen;
+	private JTextField textField_2;
+<span class="nc" id="L27">	private String default_trelloKey= &quot;a04256995af78e5ea7bff424d82cf477&quot;;</span>
+<span class="nc" id="L28">	private String default_trelloAccessToken = &quot;47fd71497e5ffcb377ea49fd0302a42f66ba0a411829da35dac1ade25025e501&quot;;</span>
+<span class="nc" id="L29">	private String default_boardID = &quot;60eae4ca19ea426cbba3021a&quot;;</span>
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+<span class="nc" id="L34">		EventQueue.invokeLater(new Runnable() {</span>
+			public void run() {
+				try {
+<span class="nc" id="L37">					TrelloLogin frame = new TrelloLogin();</span>
+<span class="nc" id="L38">					frame.setVisible(true);</span>
+<span class="nc" id="L39">				} catch (Exception e) {</span>
+<span class="nc" id="L40">					e.printStackTrace();</span>
+				}
+<span class="nc" id="L42">			}</span>
+		});
+<span class="nc" id="L44">	}</span>
+
+	/**
+	 * Create the frame.
+	 */
+<span class="nc" id="L49">	public TrelloLogin() {</span>
+<span class="nc" id="L50">		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L51">		setBounds(100, 100, 612, 411);</span>
+<span class="nc" id="L52">		contentPane = new JPanel();</span>
+<span class="nc" id="L53">		contentPane.setBackground(Color.DARK_GRAY);</span>
+<span class="nc" id="L54">		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));</span>
+<span class="nc" id="L55">		setContentPane(contentPane);</span>
+<span class="nc" id="L56">		contentPane.setLayout(null);</span>
+		
+<span class="nc" id="L58">		textField = new JTextField();</span>
+<span class="nc" id="L59">		textField.setBounds(143, 104, 317, 25);</span>
+<span class="nc" id="L60">		textField.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L61">		contentPane.add(textField);</span>
+<span class="nc" id="L62">		textField.setColumns(10);</span>
+		
+<span class="nc" id="L64">		textField_1 = new JTextField();</span>
+<span class="nc" id="L65">		textField_1.setBounds(143, 168, 317, 25);</span>
+<span class="nc" id="L66">		textField_1.setColumns(10);</span>
+<span class="nc" id="L67">		textField_1.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L68">		contentPane.add(textField_1);</span>
+		
+<span class="nc" id="L70">		textField_2 = new JTextField();</span>
+<span class="nc" id="L71">		textField_2.setBounds(143, 235, 317, 25);</span>
+<span class="nc" id="L72">		textField_2.setColumns(10);</span>
+<span class="nc" id="L73">		textField_2.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L74">		contentPane.add(textField_2);</span>
+		
+<span class="nc" id="L76">		JLabel lblNewLabel = new JLabel(&quot;Key&quot;);</span>
+<span class="nc" id="L77">		lblNewLabel.setBounds(143, 65, 159, 43);</span>
+<span class="nc" id="L78">		lblNewLabel.setBackground(new Color(240, 240, 240));</span>
+<span class="nc" id="L79">		lblNewLabel.setForeground(SystemColor.scrollbar);</span>
+<span class="nc" id="L80">		lblNewLabel.setFont(new Font(&quot;DialogInput&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L81">		contentPane.add(lblNewLabel);</span>
+		
+<span class="nc" id="L83">		JLabel lblNewLabel_1 = new JLabel(&quot;LOGIN&quot;);</span>
+<span class="nc" id="L84">		lblNewLabel_1.setBounds(248, 24, 135, 49);</span>
+<span class="nc" id="L85">		lblNewLabel_1.setFont(new Font(&quot;Bahnschrift&quot;, Font.BOLD, 35));</span>
+<span class="nc" id="L86">		lblNewLabel_1.setForeground(new Color(153, 204, 255));</span>
+<span class="nc" id="L87">		contentPane.add(lblNewLabel_1);</span>
+		
+<span class="nc" id="L89">		JLabel lblAccessToken = new JLabel(&quot;Access Token&quot;);</span>
+<span class="nc" id="L90">		lblAccessToken.setBounds(143, 129, 159, 43);</span>
+<span class="nc" id="L91">		lblAccessToken.setForeground(SystemColor.scrollbar);</span>
+<span class="nc" id="L92">		lblAccessToken.setFont(new Font(&quot;DialogInput&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L93">		lblAccessToken.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L94">		contentPane.add(lblAccessToken);</span>
+		
+<span class="nc" id="L96">		JLabel lblBoardId = new JLabel(&quot;Board ID&quot;);</span>
+<span class="nc" id="L97">		lblBoardId.setBounds(143, 203, 159, 34);</span>
+<span class="nc" id="L98">		lblBoardId.setForeground(SystemColor.scrollbar);</span>
+<span class="nc" id="L99">		lblBoardId.setFont(new Font(&quot;DialogInput&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L100">		lblBoardId.setBackground(SystemColor.menu);</span>
+<span class="nc" id="L101">		contentPane.add(lblBoardId);</span>
+		
+<span class="nc" id="L103">		JButton btnNewButton = new JButton(&quot;NEXT&quot;);</span>
+<span class="nc" id="L104">		btnNewButton.setBounds(360, 305, 100, 25);</span>
+<span class="nc" id="L105">		btnNewButton.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L107">				dispose();</span>
+<span class="nc" id="L108">			    trello = new Trello();</span>
+<span class="nc bnc" id="L109" title="All 6 branches missed.">			    if(!textField.getText().isEmpty() &amp;&amp; !textField_1.getText().isEmpty() &amp;&amp; !textField_2.getText().isEmpty())</span>
+<span class="nc" id="L110">			    	trello.iniciar(textField.getText(), textField_1.getText(), textField_2.getText());</span>
+<span class="nc" id="L111">			    else trello.iniciar(default_trelloKey,default_trelloAccessToken,default_boardID);</span>
+<span class="nc" id="L112">				trello.getFrame().setVisible(true);</span>
+<span class="nc" id="L113">			}</span>
+		});
+<span class="nc" id="L115">		btnNewButton.setFont(new Font(&quot;HP Simplified&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L116">		btnNewButton.setBackground(new Color(255, 255, 255));</span>
+<span class="nc" id="L117">		contentPane.add(btnNewButton);</span>
+		
+<span class="nc" id="L119">		JButton btnCancel = new JButton(&quot;CANCEL&quot;);</span>
+<span class="nc" id="L120">		btnCancel.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L122">				dispose();</span>
+<span class="nc" id="L123">			    mainScreen = new GUI();</span>
+<span class="nc" id="L124">			    mainScreen.setVisible(true);</span>
+<span class="nc" id="L125">			}</span>
+		});
+<span class="nc" id="L127">		btnCancel.setFont(new Font(&quot;HP Simplified&quot;, Font.PLAIN, 14));</span>
+<span class="nc" id="L128">		btnCancel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L129">		btnCancel.setBounds(143, 305, 100, 25);</span>
+<span class="nc" id="L130">		contentPane.add(btnCancel);</span>
+		
+<span class="nc" id="L132">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span>java (08/12/2021 11:29:42)</div></body></html>
